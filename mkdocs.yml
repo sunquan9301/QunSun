@@ -1,0 +1,31 @@
+pages:
+  - 主页: 'index.md'
+  - 目录:
+    - 简介: 'intro.md'
+    - 历史存档: 'legacy.md'
+  - 代码仓库: 'code_repo.md'
+
+site_name: 'LearnOpenGL CN'
+
+site_description: 'http://learnopengl.com 系列教程的简体中文翻译'
+
+site_url: https://qsun97.com/
+
+repo_url: https://github.com/sunquan9301/qunSun
+
+markdown_extensions:
+  - admonition
+  - smarty
+  - sane_lists
+  - mdx_math
+
+extra_javascript:
+  - 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML'
+
+extra_css:
+  - css/style.css
+  - css/admonition_fix.css
+
+docs_dir: 'docs'
+
+theme_dir: 'yeti'
