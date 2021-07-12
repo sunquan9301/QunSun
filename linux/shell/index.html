@@ -134,11 +134,416 @@
         
         <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
     <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#shell">一.Shell背景</a></li>
+            <li class="second-level"><a href="#11-gnu">1.1 GNU计划</a></li>
+                
+            <li class="second-level"><a href="#12-shell">1.2 Shell</a></li>
+                
+            <li class="second-level"><a href="#13-bash">1.3 Bash</a></li>
+                
+        <li class="first-level "><a href="#shell_1">二. Shell脚本基本语法</a></li>
+            <li class="second-level"><a href="#21-getting-start">2.1 Getting Start</a></li>
+                
+                <li class="third-level"><a href="#1-introduction">1. Introduction</a></li>
+                <li class="third-level"><a href="#2-setting-up-workspace">2. Setting up Workspace</a></li>
+                <li class="third-level"><a href="#3-hello-world">3. Hello World</a></li>
+                <li class="third-level"><a href="#4-motivation-example">4. Motivation Example</a></li>
+            <li class="second-level"><a href="#22-variable">2.2 Variable</a></li>
+                
+            <li class="second-level"><a href="#23-data-type">2.3 Data Type</a></li>
+                
+            <li class="second-level"><a href="#24-string">2.4 String</a></li>
+                
+            <li class="second-level"><a href="#25-array">2.5 Array</a></li>
+                
+            <li class="second-level"><a href="#26-conditional-statements">2.6 Conditional Statements</a></li>
+                
+                <li class="third-level"><a href="#1-if-else">1. if else</a></li>
+                <li class="third-level"><a href="#2-switch-case">2. switch case</a></li>
+            <li class="second-level"><a href="#27-looping">2.7 Looping</a></li>
+                
+                <li class="third-level"><a href="#1-while">1. while</a></li>
+                <li class="third-level"><a href="#2-for">2. for</a></li>
+                <li class="third-level"><a href="#3">3. 无限循环</a></li>
+            <li class="second-level"><a href="#28">2.8 基本运算</a></li>
+                
+            <li class="second-level"><a href="#29-function">2.9 Function</a></li>
+                
+            <li class="second-level"><a href="#210-import">2.10 Import</a></li>
+                
+        <li class="first-level "><a href="#shell_2">三.Shell脚本实践</a></li>
+            <li class="second-level"><a href="#31">3.1 备忘录</a></li>
+                
+            <li class="second-level"><a href="#32">3.2 导航</a></li>
+                
     </ul>
 </div></div>
         <div class="col-md-9" role="main">
 
-<p><center><h1>深入理解Shell脚本</h1></center></p></div>
+<h1>深入理解Shell脚本</h1>
+
+<h1 id="shell">一.Shell背景</h1>
+<h2 id="11-gnu">1.1 GNU计划</h2>
+<pre><code class="language-markdown">The GNU Project is a free software, mass collaboration project that Richard Stallman announced on September 27, 1983. Its goal is to give computer users freedom and control in their use of their computers and computing devices by collaboratively developing and publishing software that gives everyone the rights to freely run the software, copy and distribute it, study it, and modify it. GNU software grants these rights in its license.
+</code></pre>
+<p><font size="3">1984年，史托曼开始<code>GNU</code>计划， 这个计划的目的是:创建一个自由、开放的Unix操作系统 (Free Unix)。</p>
+<p><code>GNU's not Unix! 
+GNU并不是 Unix啊!那么GNU又是什么呢? 就是GNU's Not Unix嘛!.....可是无穷循环啊!忙碌~</code></p>
+<p><font size="3">本章所说的Bash Shell就是来源于GNU，还有一些比较著名的软件来源于GNU：</p>
+<ul>
+<li><code>Emacs</code></li>
+<li><code>GNU C (GCC)</code></li>
+<li><code>GNU C Library (glibc)</code></li>
+<li><code>Bash shell</code></li>
+</ul>
+<pre><code class="language-markdown">In 1991, the Linux kernel appeared, developed outside the GNU project by Linus Torvalds, and in December 1992 it was made available under version 2 of the GNU General Public License. Combined with the operating system utilities already developed by the GNU project, it allowed for the first operating system that was free software, commonly known as Linux.
+</code></pre>
+<h2 id="12-shell">1.2 Shell</h2>
+<p><img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/20210710143649117.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L1Njb3R0X1M=,size_16,color_FFFFFF,t_70" /></p>
+<p><br/></p>
+<p><code>我们必须要通过“ Shell ”将我们输入的指令与 Kernel 沟通， 好让 Kernel 可以控制硬件来正确无误的工作。</code></p>
+<p>可以发现应用程序其实是在最外层，如同鸡蛋外壳一样，因此就被称呼为壳程序 (shell) 啰!</p>
+<ul>
+<li>狭义：命令行方面的软件，<code>bash</code> 等。</li>
+<li>广义：图形接口的软件!因为图形接口其实也能够操作各种应用程序来调用核心工作啊!</li>
+</ul>
+<p><code>Shell</code>有很多版本例如常听到的<code>Bourne SHell (sh)</code> 、在 <code>Sun</code> 里头默认的 <code>C SHell</code>，还有<code>TCSH</code>，<code>zsh</code> 等等，每一种<code>Shell</code> 都各有其特点。<code>Bash Shell</code>是<code>Bourne Shell</code> 的增强版本，也是基准于 <code>GNU</code>的架构下发展出来的!</p>
+<p>在你的Mac电脑中有多少可使用的<code>Shells</code>呢，使用如下命令查看：</p>
+<pre><code class="language-bash">MacBook-Pro-3:~ sunquan$ cat -n /etc/shells
+     1  # List of acceptable shells for chpass(1).
+     2  # Ftpd will not allow users to connect who are not using
+     3  # one of these shells.
+     4  
+     5  /bin/bash
+     6  /bin/csh
+     7  /bin/dash
+     8  /bin/ksh
+     9  /bin/sh
+    10  /bin/tcsh
+    11  /bin/zsh
+MacBook-Pro-3:~ sunquan$ 
+</code></pre>
+<h2 id="13-bash">1.3 Bash</h2>
+<p>而当下日常大多数默认使用的是<code>Bash Shell</code>。我们可以在电脑中<code>man bash</code>一下</p>
+<pre><code class="language-bash">MacBook-Pro-3:~ sunquan$ man bash
+BASH(1)                                                                BASH(1)
+
+NAME
+       bash - GNU Bourne-Again SHell
+
+SYNOPSIS
+       bash [options] [file]
+
+COPYRIGHT
+       Bash is Copyright (C) 1989-2005 by the Free Software Foundation, Inc.
+
+DESCRIPTION
+       Bash  is  an  sh-compatible  command language interpreter that executes
+       commands read from the standard input or from a file.  Bash also incor-
+       porates useful features from the Korn and C shells (ksh and csh).
+
+       Bash  is  intended  to  be a conformant implementation of the Shell and
+       Utilities portion  of  the  IEEE  POSIX  specification  (IEEE  Standard
+       1003.1).  Bash can be configured to be POSIX-conformant by default.
+</code></pre>
+<pre><code class="language-markdown">Bash is a Unix shell and command language written by Brian Fox for the GNU Project as a free software replacement for the Bourne shell. First released in 1989, it has been used as the default login shell for most Linux distributions.
+</code></pre>
+<p><font size="3">早在1989年就发布了<code>Bash</code>，被用来操作操作系统的基本接口。那<code>Bash</code>有哪些优点呢：</p>
+<p><font size="3"><strong>1.命令历史记录功能</strong></p>
+<p><font size="3">用户可以在命令终端中通过上下箭头键来切换历史使用的命令，在<code>~/.bash_history</code>里记录了使用过的<code>bash</code>命令</p>
+<pre><code class="language-bash">MacBook-Pro-3:~ sunquan$ tail -n 10 ~/.bash_history 
+vim awkDemo2
+diff awkDemo awkDemo2
+eixt (0) | echo $?
+eixt (0) ; echo $?
+var = sq ; echo $var
+var=sq;echo $var
+exit 0;echo $var
+</code></pre>
+<p><font size="3"><strong>2.命令补全功能</strong></font></p>
+<p><font size="3">通过Tab键可进行命令补全和文件补全</p>
+<p><font size="3"><strong>3.alase 别名设置</strong></p>
+<pre><code class="language-bash">MacBook-Pro-3:~ sunquan$ ls -l
+total 32
+drwx------@  6 sunquan  staff   192  5 27  2020 Applications
+...
+MacBook-Pro-3:~ sunquan$ alias ll='ls -l'
+MacBook-Pro-3:~ sunquan$ ll
+total 32
+drwx------@  6 sunquan  staff   192  5 27  2020 Applications
+MacBook-Pro-3:~ sunquan$ 
+</code></pre>
+<p><font size="3"><strong>4.程序化脚本:</strong> (shell scripts)</font></p>
+<p><font size="3">可通过写shell脚本，汇集命令构建更多的功能</p>
+<h1 id="shell_1">二. Shell脚本基本语法</h1>
+<h2 id="21-getting-start">2.1 Getting Start</h2>
+<h3 id="1-introduction">1. Introduction</h3>
+<p><font size="3"><code>shell script</code> 是利用<code>shell</code>的功能所写的一个“程序 (program)”，这个程序是使用纯文本文件。也可被看成批处理文件或一个程序语言，且由于都是利用 shell 与相关工具指令，所以不需要编译即可执行。</p>
+<h3 id="2-setting-up-workspace">2. Setting up Workspace</h3>
+<pre><code class="language-bash">MacBook-Pro-3:~ sunquan$ vim ~/.bash_profile
+export HISTFILESIZE=1024 #设置history记录bash命令的大小
+export PATH=${PATH}:/Users/sunquan/Library/shell #shell工作空间
+export PATH=${PATH}:/usr/local/bin
+export PATH=$PATH:/Users/sunquan/Library/Android/android-ndk-r18b/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/
+export WORKON_HOME=$HOME/.virtualenvs
+export VIRTUALENVWRAPPER_PYTHON=/usr/local/bin/python3
+source /Library/Frameworks/Python.framework/Versions/3.7/bin/virtualenvwrapper.sh
+# Setting PATH for Python 3.7
+# The original version is saved in .bash_profile.pysave
+PATH=&quot;/Library/Frameworks/Python.framework/Versions/3.7/bin:${PATH}&quot;
+export PATH
+MacBook-Pro-3:~ sunquan$ source ~/.bash_profile
+</code></pre>
+<p><font size="3">我自己的shell脚本存放在<code>/Users/sunquan/Library/shell</code>下，配置到系统的PATH里，当使用时脚本命令时，系统可自动在该目录下找到相关命令并执行。</p>
+<h3 id="3-hello-world">3. Hello World</h3>
+<pre><code class="language-bash">#! /bin/bash
+# author: scott sun
+# #!是一个约定的标记，告诉脚本用什么shell环境来执行
+# a program to show &quot;hello world&quot; in your screen
+# how to run : switch the dir
+# chmod +x helloworld
+# ./helloworld; if your add the scripts dir in your PATH  variable, you can run helloworld directly
+echo &quot;Hello World&quot;
+exit 0
+</code></pre>
+<ul>
+<li>第一行<code>#!/bin/bash</code>宣告这个script使用的<code>shell</code>名称，必须要包含。当这个程序运行的以后，就能够载入bash的相关环境配置文件。</li>
+<li>一个指令的执行结果可以使用<code>$?</code>这个变量来观察。因此<code>exit 0</code> 代表离开<code>script</code>后回传一个<code>0</code>给系统。随后如果下达<code>echo $?</code>则可得到0的值 </li>
+</ul>
+<h3 id="4-motivation-example">4. Motivation Example</h3>
+<pre><code class="language-bash"> #!/bin/bash
+ #author : scott sun
+ #function: use to count how much commands in your computer.
+ IFS=&quot;:&quot;
+ count=0; nonex=0
+ for directory in $PATH ; do
+     if [ -d &quot;$directory&quot; ]
+     then
+         for command in &quot;$directory&quot;/* ; do
+             if [ -x &quot;$command&quot; ]
+             then
+                 count=$[count + 1]
+             else
+                 nonex=$[nonex + 1]
+             fi
+         done
+     fi
+ done
+ echo &quot;$count commands, and $nonex that weren't executable&quot;
+ exit 0
+
+MacBook-Pro-3:shell sunquan$ countShellCommands 
+2438 commands, and 14 that weren't executable
+MacBook-Pro-3:shell sunquan$
+
+</code></pre>
+<h2 id="22-variable">2.2 Variable</h2>
+<p><strong>定义变量：</strong></p>
+<pre><code class="language-shell">myname=&quot;sq&quot;
+</code></pre>
+<ul>
+<li>变量名不能有空格</li>
+<li>英文字母，数字和下划线，不能使用<code>bash</code>关键字</li>
+</ul>
+<p><strong>使用变量</strong></p>
+<pre><code class="language-shell">myname=&quot;sq&quot;
+echo $myname
+echo ${myname}
+echo &quot;my name is ${myname}&quot;
+</code></pre>
+<h2 id="23-data-type">2.3 Data Type</h2>
+<pre><code class="language-bash">#!/bin/bash
+ vint=1
+ vint2=2
+ vfloat=1.1
+ vString=&quot;sq&quot;
+ echo &quot;int add int is $[ vint + vint2 ]&quot;
+ echo &quot;int add float is $[ vint + vfloat ]&quot;
+ echo &quot;int add string $[ vint + vString ]&quot;
+
+MacBook-Pro-3:shell sunquan$ variableDemo 
+int add int is 3
+/Users/sunquan/Library/shell/variableDemo: line 8: 1.1: syntax error: invalid arithmetic operator (error token is &quot;.1&quot;)
+int add string 1
+MacBook-Pro-3:shell sunquan$
+</code></pre>
+<pre><code class="language-markdown">1. shell没有明确的关键字定义数据类型
+2. 相同类型的可相加，否则报错
+3. 整形和字符串不能相加
+</code></pre>
+<h2 id="24-string">2.4 String</h2>
+<pre><code class="language-bash">#!/bin/bash
+ myname=&quot;scott.sun&quot;
+ echo &quot;hello my name is $myname&quot;
+ echo 'hello, my name is $myname'
+ echo &quot;the length of $myname is ${#myname}&quot;
+ echo &quot;substring(1,3) is ${myname:1:3}&quot;
+ echo &quot;the first name is &quot;; eval &quot;echo $myname | cut -c1-5&quot;
+</code></pre>
+<ul>
+<li>
+<p>单引号原样输出，双引号可显示变量</p>
+</li>
+<li>
+<p><code>${#string}</code>输出字符串长度</p>
+</li>
+<li><code>${string:start:end}</code>截取字符串</li>
+</ul>
+<h2 id="25-array">2.5 Array</h2>
+<pre><code class="language-bash">#!/bin/bash
+ array=(
+     1
+     2
+     3
+     4
+     5
+     )
+ echo $array
+ echo ${array[0]}
+ echo ${array[5]}
+ echo &quot;the length of arr is ${#array[*]}&quot;
+ echo &quot;the content of array is ${array[*]}&quot;
+ echo &quot;the content of array is ${array[@]}&quot;
+
+MacBook-Pro-3:shell sunquan$ arrayDemo 
+1
+1
+
+the length of arr is 5
+the content of array is 1 2 3 4 5
+the content of array is 1 2 3 4 5
+</code></pre>
+<p><code>${array[*]}</code>,  <code>${array[@])</code>功能雷同</p>
+<h2 id="26-conditional-statements">2.6 Conditional Statements</h2>
+<h3 id="1-if-else">1. if else</h3>
+<pre><code class="language-bash">if [ -x &quot;/path/filename&quot; ]
+then
+    echo &quot;this file can execute&quot;
+else
+    echo &quot;this file can't execute&quot;
+fi
+</code></pre>
+<h3 id="2-switch-case">2. switch case</h3>
+<pre><code class="language-bash">#!/bin/bash
+echo &quot;input the num between 1-4&quot;
+read num
+case $num in
+    1) echo &quot;the num is 1&quot;
+    ;;
+    2) echo &quot;the num is 2&quot;
+    ;;
+    3) echo &quot;the num is 3&quot;
+    ;;
+    4) echo &quot;the num is 4&quot;
+    ;;
+    *) echo &quot;the num is out of 1-4&quot;
+    ;;
+esac 
+</code></pre>
+<h2 id="27-looping">2.7 Looping</h2>
+<h3 id="1-while">1. while</h3>
+<pre><code class="language-bash">#!/bin/bash
+cnt=1
+while(( $cnt&lt;=5 ))
+do
+    echo $cnt
+    let &quot;cnt++&quot;
+done
+</code></pre>
+<ul>
+<li><code>let</code> 用于执行一个或者多个表达式不需要<code>$</code>符号</li>
+</ul>
+<h3 id="2-for">2. for</h3>
+<pre><code class="language-bash">#!/bin/bash
+for loop in 1 2 3 4 5
+do 
+    echo &quot;The value is $loop&quot;
+done
+</code></pre>
+<h3 id="3">3. 无限循环</h3>
+<pre><code class="language-bash">for (( ; ; ))
+</code></pre>
+<h2 id="28">2.8 基本运算</h2>
+<pre><code class="language-bash">#   +   -   *   /   %
+#   ==  !=  -eq -ne -gt -lt -ge -le 
+#   !   -o -a (非或与）
+#   -z 字符串长度是否为0
+#   -n 字符串长度是否部位0
+#   $ 字符串是否为空
+echo $[ 1 + 2 ]
+# -r -w -f -d -x -e
+# 可读， 可写 普通文件   是否目录    是否可执行   是否存在
+if [ -r $file ]
+then
+    echo &quot;文件可读&quot;
+else
+    echo &quot;文件不可读&quot;
+fi
+</code></pre>
+<h2 id="29-function">2.9 Function</h2>
+<pre><code class="language-bash"> #!/bin/bash
+
+ fun1(){
+     echo &quot;the name of command is $0&quot;
+     echo &quot;the first params is $1&quot;
+     echo &quot;the num of params is $#&quot;
+     echo &quot;the str of params is $*&quot;
+ }
+ fun1 1 2 3 4 str
+ exit 0
+
+MacBook-Pro-3:shell sunquan$ funcDemo 
+the name of command is /Users/sunquan/Library/shell/funcDemo
+the first params is 1
+the num of params is 5
+the str of params is 1 2 3 4 str
+</code></pre>
+<h2 id="210-import">2.10 Import</h2>
+<pre><code class="language-bash">#!/bin/bash 
+# this is first script
+. secondScriptName
+</code></pre>
+<h1 id="shell_2">三.Shell脚本实践</h1>
+<h2 id="31">3.1 备忘录</h2>
+<pre><code class="language-bash">#!/bin/bash
+# file name: remember
+# func : remember the note
+rememberfile=&quot;$HOME/.remember_work&quot;
+if [ $# -eq 0 ] ; then
+    echo &quot;Enter note, end with ^D&quot;
+    cat - &gt;&gt; $rememberfile
+else 
+    echo &quot;$@&quot; &gt;&gt; $rememberfile
+fi
+exit 0
+</code></pre>
+<pre><code class="language-bash">#!/bin/bash
+# remind note
+rememberfile=&quot;$HOME/.remember_work&quot;
+if [ ! -f $rememberfile ]
+then
+    echo &quot;$0: .remember not exist.&quot; &gt;$2
+    exit 1
+fi
+
+if [ $# -eq 0 ]
+then 
+    more $rememberfile
+else 
+    grep -i &quot;$@&quot; $rememberfile | more
+fi
+exit 0
+</code></pre>
+<h2 id="32">3.2 导航</h2>
+<pre><code class="language-bash">#!/bin/bash
+if [ $# -le 0 ] ; then 
+    open https://baidu.com
+elif [ $1 == 'mail' ] ; then
+    open mail.163.com
+...
+fi
+</code></pre>
+<p><code>Shell</code>还有很多用法，就如同 <code>4.Motivation Example</code>中，电脑里至少有上千个可执行命令，如同乐高，用这些命令堆出你想像中的积木。你可以和<code>Git</code>，<code>awk</code>，<code>sed</code>，<code>ffmpeg</code>，<code>adb</code>，<code>gradle</code>等等开发环境和命令结合来打造你的完美开发环境。</p></div>
         
         
     </div>
