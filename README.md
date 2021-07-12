@@ -1,3 +1,4 @@
-## Welcome to GitHub Pages
-this is home
 
+## Welcome~~
+
+<font color="red">this is home</font>
