@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="the homepage of Scott Sun">
+    
+    <link rel="canonical" href="https://qsun97.com/linux/awk/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+
+    
+    <title>深入理解Awk - Quan Sun</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="../../css/base.min.css" rel="stylesheet">
+    <link href="../../css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+    <link href="../../css/style.css" rel="stylesheet">
+    <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href="../..">Quan Sun</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="../..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Blog <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../../blog/">文章汇总</a>
+</li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Linux</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../shell/">深入理解Shell脚本</a>
+</li>
+
+        
+            
+<li >
+    <a href="../vim/">深入理解Vim</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">深入理解Awk</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../vim/">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li class="disabled">
+                        <a rel="next" >
+                            Next <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#_1">简介</a></li>
+        <li class="first-level "><a href="#benchmarks">Benchmarks</a></li>
+            <li class="second-level"><a href="#bbs_list">bbs_list</a></li>
+                
+            <li class="second-level"><a href="#inventory-shipped">inventory-shipped</a></li>
+                
+            <li class="second-level"><a href="#e1-find-lines-contain-foo">e1. find lines contain foo</a></li>
+                
+            <li class="second-level"><a href="#e2-find-lines-contain-12-or-21-str">e2. find lines contain 12 or 21 str</a></li>
+                
+            <li class="second-level"><a href="#e3-7size">e3. 统计当前目录下7月份更改的文件size总和</a></li>
+                
+        <li class="first-level "><a href="#program">Program</a></li>
+            <li class="second-level"><a href="#program-format">Program format</a></li>
+                
+            <li class="second-level"><a href="#record">Record</a></li>
+                
+            <li class="second-level"><a href="#field">Field</a></li>
+                
+            <li class="second-level"><a href="#e4">e4. 计算</a></li>
+                
+            <li class="second-level"><a href="#_2">内置变量说明</a></li>
+                
+        <li class="first-level "><a href="#patterns">Patterns</a></li>
+        <li class="first-level "><a href="#action">Action</a></li>
+            <li class="second-level"><a href="#expressions-as-action">Expressions as Action</a></li>
+                
+            <li class="second-level"><a href="#control-statement-in-action">Control Statement in Action</a></li>
+                
+            <li class="second-level"><a href="#array-in-awk">Array in Awk</a></li>
+                
+            <li class="second-level"><a href="#e5-awk-scriptshello-world">e5. awk scripts：hello world</a></li>
+                
+            <li class="second-level"><a href="#func-in-awk">Func in Awk</a></li>
+                
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h1>深入理解awk</h1>
+
+<h2 id="_1">简介</h2>
+<p><code>man awk</code></p>
+<pre><code class="language-bash">awk
+
+NAME
+       awk - pattern-directed scanning and processing language
+
+SYNOPSIS
+       awk [ -F fs ] [ -v var=value ] [ 'prog' | -f progfile ] [ file ...  ]
+
+DESCRIPTION
+       Awk  scans  each  input file for lines that match any of a set of patterns specified literally in prog or in one or more
+       files specified as -f progfile.  With each pattern there can be an associated action that will be performed when a  line
+       of  a file matches the pattern.  Each line is matched against the pattern portion of every pattern-action statement; the
+       associated action is performed for each matched pattern. 
+</code></pre>
+<ul>
+<li>awk 最早由<code>Alfred V. Aho</code>, <code>Peter J. Weinberger</code>, and <code>Brian W. Kernighan</code>，最早血瘀1977年。</li>
+<li>awk is a programming language.</li>
+</ul>
+<h2 id="benchmarks">Benchmarks</h2>
+<h3 id="bbs_list">bbs_list</h3>
+<p>each row is </p>
+<ul>
+<li><code>a computer bulletin board</code></li>
+<li><code>phone number</code></li>
+<li><code>baud rate</code></li>
+<li><code>a code</code>. </li>
+</ul>
+<pre><code class="language-markdown"> aardvark    555-5553    1200/300          B
+ alpo-net    555-3412    2400/1200/300     A
+ barfly      555-7685    1200/300          A
+ bites       555-1675    2400/1200/300     A
+ camelot     555-0542    300               C
+ core        555-2912    1200/300          C
+ fooey       555-1234    2400/1200/300     B
+ foot        555-6699    1200/300          B
+ macfoo      555-6480    1200/300          A
+ sdace       555-3430    2400/1200/300     A
+ sabafoo     555-2127    1200/300          C
+</code></pre>
+<h3 id="inventory-shipped">inventory-shipped</h3>
+<p>each row is</p>
+<ul>
+<li><code>year</code></li>
+<li><code>green crates shipped</code></li>
+<li><code>red boxes shipped</code></li>
+<li><code>orange bags shipped</code></li>
+<li><code>blue packages shipped</code></li>
+</ul>
+<pre><code class="language-markdown"> Jan  13  25  15 115
+ Feb  15  32  24 226
+ Mar  15  24  34 228
+ Apr  31  52  63 420
+ May  16  34  29 208
+ Jun  31  42  75 492
+ Jul  24  34  67 436
+ Aug  15  34  47 316
+ Sep  13  55  37 277
+ Oct  29  54  68 525
+ Nov  20  87  82 577
+ Dec  17  35  61 401
+ Jan  21  36  64 620
+ Feb  26  58  80 652
+ Mar  24  75  70 495
+ Apr  21  70  74 514
+</code></pre>
+<h3 id="e1-find-lines-contain-foo">e1. find lines contain foo</h3>
+<pre><code class="language-bash">MacBook-Pro-3:benchmarks sunquan$ awk '/foo/{print $0}' bbs_list 
+fooey       555-1234    2400/1200/300     B
+foot        555-6699    1200/300          B
+macfoo      555-6480    1200/300          A
+sabafoo     555-2127    1200/300          C
+</code></pre>
+<ul>
+<li><code>/foo/</code>  ：pattern</li>
+<li><code>{print $0}</code> ：action</li>
+</ul>
+<h3 id="e2-find-lines-contain-12-or-21-str">e2. find lines contain 12 or 21 str</h3>
+<pre><code class="language-bash">MacBook-Pro-3:benchmarks sunquan$ awk '/12/{print $0}/21/{print $0}' bbs_list inventory-shipped 
+aardvark    555-5553    1200/300          B
+alpo-net    555-3412    2400/1200/300     A
+barfly      555-7685    1200/300          A
+bites       555-1675    2400/1200/300     A
+core        555-2912    1200/300          C
+fooey       555-1234    2400/1200/300     B
+foot        555-6699    1200/300          B
+macfoo      555-6480    1200/300          A
+sdace       555-3430    2400/1200/300     A
+sabafoo     555-2127    1200/300          C
+sabafoo     555-2127    1200/300          C
+Jan  21  36  64 620
+Apr  21  70  74 514
+</code></pre>
+<ul>
+<li>if a line contains both strings, it is printed twice，once by each rule.</li>
+</ul>
+<h3 id="e3-7size">e3. 统计当前目录下7月份更改的文件size总和</h3>
+<pre><code class="language-bash">MacBook-Pro-3:benchmarks sunquan$ ls -l
+total 16
+-rw-r--r--  1 sunquan  staff  484  7 13 11:05 bbs_list
+-rw-r--r--  1 sunquan  staff  320  7 13 11:22 inventory-shipped
+MacBook-Pro-3:benchmarks sunquan$ ls -l | awk '$6 == &quot;7&quot; {sum += $5} END {print sum}'
+804
+MacBook-Pro-3:benchmarks sunquan$
+</code></pre>
+<h2 id="program">Program</h2>
+<p><em>You write an awk program that consists of a series of rules to tell awk what to do</em></p>
+<ul>
+<li><code>awk</code> 接受文件，按行检索是否匹配程序中的规则。</li>
+<li>如果某行匹配某个规则，则执行该规则后的action，直到最后一行</li>
+</ul>
+<h3 id="program-format">Program format</h3>
+<ol>
+<li>
+<p><em>awk &lsquo;program&rsquo; input-file1 input-file2</em></p>
+</li>
+<li>
+<p><em>awk -f program-file input-file1 input-file2</em></p>
+</li>
+<li>program like <em>pattern { action }  pattern { action }  &hellip;</em></li>
+</ol>
+<h3 id="record">Record</h3>
+<p>awk会把输入文件的内容划分为一个个<code>record</code>。通过内置的<code>RS</code>变量，默认值为<code>\n</code></p>
+<pre><code class="language-bash">awk '{ print $0 } RS=&quot;/&quot; bbs_list
+or
+awk ’BEGIN { RS = &quot;/&quot; } ; { print $0 }’ bbs_list
+</code></pre>
+<h3 id="field">Field</h3>
+<p><code>record</code> 会自动被解析为多个<code>field</code>，你可以通过<code>$</code>来引用<code>field</code>。</p>
+<pre><code class="language-bash">This seems like a pretty nice example
+</code></pre>
+<ul>
+<li><code>$1</code> ：This</li>
+</ul>
+<h3 id="e4">e4. 计算</h3>
+<pre><code class="language-bash">awk '{ total = ($5 + $4 + $3 + $2) ; print total }' inventory-shipped
+</code></pre>
+<h3 id="_2">内置变量说明</h3>
+<table>
+<thead>
+<tr>
+<th align="left">术语</th>
+<th align="left">解释</th>
+<th align="left">用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>RS</code></td>
+<td align="left">record分隔符</td>
+<td align="left"><em>awk &lsquo;{ print $0 } RS=&rdquo;/&rdquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>$NF</code></td>
+<td align="left">最后一个field</td>
+<td align="left"><em>awk &lsquo;$1 ~ /foo/ {print $1,$NF}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>$0</code></td>
+<td align="left">当前record</td>
+<td align="left"><em>awk &lsquo;{print $0}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>NF</code></td>
+<td align="left">the number of fields</td>
+<td align="left"><em>awk &lsquo;END {print &ldquo;the num of fields is &rdquo; NF}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>NR</code></td>
+<td align="left">line num</td>
+<td align="left"><em>awk &lsquo;{print NR , $0}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>FS</code></td>
+<td align="left">field分隔符</td>
+<td align="left"><em>awk &lsquo;BEGIN {FS = &ldquo;/&rdquo;} ; {print $1}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"></td>
+<td align="left">使用-F-指定FS</td>
+<td align="left"><em>awk -F- &lsquo;{print $1}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>OFS</code></td>
+<td align="left">输出Field分隔符</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>ORS</code></td>
+<td align="left">输出Record分隔符</td>
+<td align="left"><em>awk &lsquo;BEGIN { OFS = &ldquo;;&rdquo; ;  ORS = &ldquo;\n\n&rdquo; } ; {print $1, $2}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>&gt;</code></td>
+<td align="left">输出到文件中</td>
+<td align="left"><em>awk &lsquo;BEGIN {OFS = &ldquo;;&rdquo;} ; {print $1, $2 &gt; &ldquo;result&rdquo;}&rsquo; bbs_list</em></td>
+</tr>
+</tbody>
+</table>
+<h2 id="patterns">Patterns</h2>
+<table>
+<thead>
+<tr>
+<th align="left">术语</th>
+<th align="left">解释</th>
+<th align="left">awk用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>exp ~ /regexp/</code></td>
+<td align="left">record分隔符</td>
+<td align="left"><em>awk &lsquo;$3 ~ /200/ {print $1, $3}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>exp !~ /regexp/</code></td>
+<td align="left">最后一个field</td>
+<td align="left"><em>awk &lsquo;$3 !~ /200/ {print $1, $3}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code> <code>==</code> <code>!=</code> <code>~</code> <code>!~</code></td>
+<td align="left">Comparison Expressions</td>
+<td align="left"><em>awk &lsquo;$1 ~ /foo/ {print $1}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>&amp;&amp;</code> <code>||</code> <code>!</code></td>
+<td align="left">Boolean Operators</td>
+<td align="left"><em>awk &lsquo;$1 ~ /foo/ &amp;&amp; $3 ~ 300 {print $1, $3}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>BEGIN</code></td>
+<td align="left">开头</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>END</code></td>
+<td align="left">结尾</td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>Empty Pattern</code></td>
+<td align="left">匹配任何一行</td>
+<td align="left">awk ’{ print $1 }’ BBS-list</td>
+</tr>
+</tbody>
+</table>
+<h2 id="action">Action</h2>
+<h3 id="expressions-as-action">Expressions as Action</h3>
+<table>
+<thead>
+<tr>
+<th align="left">术语</th>
+<th align="left">解释</th>
+<th align="left">awk用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>\\</code> <code>\a</code> <code>\b</code> <code>\f</code> <code>\n</code> <code>\r</code> <code>\t</code></td>
+<td align="left">Constant Expressions</td>
+<td align="left"><em>awk &lsquo;BEGIN {print &ldquo;hello \n world&rdquo;}&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>var=text</code></td>
+<td align="left">Variable</td>
+<td align="left"><em>awk &lsquo;{print $var}&rsquo; var=1 bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>x opt y</code></td>
+<td align="left">Opt</td>
+<td align="left"><em>awk &lsquo;{ total = $2 + $3 / $4 ; print total}&rsquo; inventory-shipped</em></td>
+</tr>
+<tr>
+<td align="left"><code>fun(args)</code></td>
+<td align="left">invoke funs</td>
+<td align="left"><em>awk &lsquo;BEGIN {result = rand() ; print result}&rsquo; bbs_list</em></td>
+</tr>
+</tbody>
+</table>
+<h3 id="control-statement-in-action">Control Statement in Action</h3>
+<table>
+<thead>
+<tr>
+<th align="left">术语</th>
+<th align="left">解释</th>
+<th align="left">awk用法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>if (cod) then-body else else-body</code></td>
+<td align="left">If else</td>
+<td align="left"><em>awk &lsquo;{if ($2 % 2 == 0) print $2 &ldquo;is evel&rdquo; ; else print $2 &ldquo;is odd&rdquo;}&rsquo; inventory-shipped</em></td>
+</tr>
+<tr>
+<td align="left"><code>while (cod) body</code></td>
+<td align="left">while</td>
+<td align="left"><em>#! /usr/bin/awk -f<br/> {<br/>     i = 1<br/>     while (i &lt;= 3){<br/>          print $i<br/>          i++<br/>      }<br/> }</em></td>
+</tr>
+<tr>
+<td align="left"><code>for (initialization; condition; increment) body</code></td>
+<td align="left">for</td>
+<td align="left"><em>awk &lsquo;{ for (i=1; i&lt;=3; i++) print $i }&rsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>break</code> <code>continue</code></td>
+<td align="left"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>next</code></td>
+<td align="left">stop cur record, go to next record.</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="array-in-awk">Array in Awk</h3>
+<p>Arr in awk looks like map。</p>
+<ul>
+<li><code>array [index ]</code> to get a value</li>
+<li><code>array[subscript] = value</code> to put a value</li>
+<li>you don&rsquo;t need to init size for arr</li>
+</ul>
+<pre><code class="language-bash">#! /usr/bin/awk -f
+{
+        if ($1 &gt; max)
+         max = $1
+    arr[$1] = $0
+}
+END{
+    for (x = 1; x &lt;= max; x++)
+            print arr[x]
+}
+
+## input data 
+5 IamtheFiveman
+2 Who are you? The new number two! 4 ...Andfouronthefloor
+1 Who is number one?
+3 I three you.
+
+## output result
+1 Who is number one?
+2 Who are you? The new number two! 3 I three you.
+4 ...Andfouronthefloor
+5 IamtheFiveman
+</code></pre>
+<h3 id="e5-awk-scriptshello-world">e5. awk scripts：hello world</h3>
+<pre><code class="language-bash">MacBook-Pro-3:shell sunquan$ which awk
+/usr/bin/awk
+# demo: awkHelloWorld 
+#! /usr/bin/awk -f
+BEGIN {print &quot;hello, world&quot;}
+
+MacBook-Pro-3:shell sunquan$ awkHelloWorld
+&quot;hello, world&quot;
+</code></pre>
+<h3 id="func-in-awk">Func in Awk</h3>
+<pre><code class="language-bash"> #! /usr/bin/awk -f
+ #file name is awkHelloWorld
+ function myFunc (win) {
+     print &quot;the value is &quot; , win
+ }
+ function doBefore (){
+     print &quot;hello world&quot;
+ }
+ function doLast (){
+     print &quot;the num of lines is &quot;, NR
+ }
+
+ BEGIN {doBefore()} ; {myFunc($1)} ; END {doLast()}
+
+ # result 
+awkHelloWorld benchmarks/bbs_list 
+hello world
+the value is  aardvark
+the value is  alpo-net
+the value is  barfly
+the value is  bites
+the value is  camelot
+the value is  core
+the value is  fooey
+the value is  foot
+the value is  macfoo
+the value is  sdace
+the value is  sabafoo
+the num of lines is  11
+</code></pre></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../../js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = "../.."</script>
+    
+    <script src="../../js/base.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="../../search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>
