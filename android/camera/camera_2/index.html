@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="the homepage of Scott Sun">
+    
+    <link rel="canonical" href="https://qsun97.com/android/camera/camera_2/">
+    <link rel="shortcut icon" href="../../../img/favicon.ico">
+
+    
+    <title>Android Camera理论协议和规范 - Quan Sun</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../../../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="../../../css/base.min.css" rel="stylesheet">
+    <link href="../../../css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+    <link href="../../../css/style.css" rel="stylesheet">
+    <link href="../../../css/admonition_fix.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href="../../..">Quan Sun</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="../../..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Blog <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../../../blog/">文章汇总</a>
+</li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Linux</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../../../linux/shell/">深入理解Shell脚本</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../../linux/vim/">深入理解Vim</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../../linux/awk/">深入理解Awk</a>
+</li>
+
+        
+            
+<li >
+    <a href="../../../linux/sed/">深入理解Sed</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Android</a>
+    <ul class="dropdown-menu">
+        
+            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Camera</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../camera_1/">Camera理论知识和基本原理</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">Android Camera理论协议和规范</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../camera_1/">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li class="disabled">
+                        <a rel="next" >
+                            Next <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#android-camera">Android Camera理论协议和规范</a></li>
+            <li class="second-level"><a href="#_1">简介</a></li>
+                
+            <li class="second-level"><a href="#android">Android体系设计理念</a></li>
+                
+            <li class="second-level"><a href="#android_1">Android兼容性计划</a></li>
+                
+            <li class="second-level"><a href="#camera">Camera相关定义规范</a></li>
+                
+                <li class="third-level"><a href="#_2">摄像头</a></li>
+            <li class="second-level"><a href="#_3">后置摄像头</a></li>
+                
+            <li class="second-level"><a href="#_4">前置摄像头</a></li>
+                
+            <li class="second-level"><a href="#_5">外接摄像头</a></li>
+                
+            <li class="second-level"><a href="#camera-api">Camera API行为</a></li>
+                
+            <li class="second-level"><a href="#_6">摄像头方向</a></li>
+                
+                <li class="third-level"><a href="#_7">图像编码</a></li>
+                <li class="third-level"><a href="#_8">图像解码</a></li>
+                <li class="third-level"><a href="#_9">视频编解码器</a></li>
+                <li class="third-level"><a href="#_10">视频编码</a></li>
+                <li class="third-level"><a href="#_11">视频解码</a></li>
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h1 id="android-camera">Android Camera理论协议和规范</h1>
+<h2 id="_1">简介</h2>
+<p><strong>本篇文章初步解决如下问题：</strong></p>
+<ul>
+<li><strong>总结Android系统中的Camera硬件规范</strong></li>
+<li><strong>总结为何拍照，摄像不同手机不同系统中使用固定的intent能够调用</strong></li>
+<li><strong>总结为何不同手机操作系统，摄像头以及摄像头产出的图片和视频格式的行为是一致的</strong></li>
+</ul>
+<h2 id="android">Android体系设计理念</h2>
+<blockquote>
+<p>Android 源自于 Google 牵头并联合众多企业成立的&rdquo;开放手持设备联盟”(OHA)。许多企业在 Android 上投入了大量资金和人力，要把Android打造成一个针对多种不同设备类型的开放源代码软件堆栈平台，其设计可确保不存在一个集中瓶颈。因此没有任何行业参与者可一手限制或控制其他参与者的创新。即可以打造功能完善的高品质消费类产品，而且可以完全开放源代码，供第三方自由定制和移植。</p>
+</blockquote>
+<p><img alt="Android 框架详情" src="../../../img/android_framework_details.png" /></p>
+<h2 id="android_1">Android兼容性计划</h2>
+<p>既然Android是完全开放源代码的，全世界又有很多的Android设备制造商，Android软件开发者，那如何保证不同的手机使用Android系统能有一致的硬件兼容和用户体验呢。这里就得提到<code>Android兼容性计划</code></p>
+<ul>
+<li>其定义了 Android 平台的技术细节，并为原始设备制造商 (OEM) 提供了各种工具，以确保开发者应用可以在各种设备上顺利运行。</li>
+<li>为应用开发者提供一致的应用和硬件环境。兼容性计划精确定义了开发者在 API 和功能方面可以从兼容设备上获得什么支持。开发者可以确信他们的应用在任何兼容设备上顺畅地运行。</li>
+<li>最大限度降低与兼容性相关的成本和开销。确保设备制造商能够轻松地实现兼容性，并且成本低廉。</li>
+<li>为消费者提供一致的应用体验。如果某个应用在一部兼容的 Android 设备上运行良好，那么它在与同一 Android 平台版本兼容的任何其他设备上也应运行良好。</li>
+</ul>
+<h2 id="camera">Camera相关定义规范</h2>
+<p>这里参考Android 10.0列出于Camera相关的规范定义，<font color="red"><strong>需要重点注意的，我标记为红色字体</strong></font>。更多详细内容可参考<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<h3 id="_2">摄像头</h3>
+<p>如果设备实现包含至少一个摄像头，则：</p>
+<ul>
+<li>[C-1-1] 必须声明 <code>android.hardware.camera.any</code> 功能标记。</li>
+<li>[C-1-2] <font color="red">当摄像头打开着以进行基本预览和静态拍摄时，必须确保应用可以同时分配 3 个 RGBA_8888 位图，并且其大小与设备上分辨率最高的摄像头传感器所生成的图片相同。</font></li>
+<li>[C-1-3] <font color='red'>必须确保处理 intent <code>MediaStore.ACTION_IMAGE_CAPTURE</code> <code>MediaStore.ACTION_IMAGE_CAPTURE_SECURE</code> <code>MediaStore.ACTION_VIDEO_CAPTURE</code>的预安装默认摄像头应用负责先移除图像元数据中的用户位置，再将其发送至接收应用（如果接收应用没有 <code>ACCESS_FINE_LOCATION</code>）。</font></li>
+</ul>
+<h2 id="_3">后置摄像头</h2>
+<p>后置摄像头指位于设备上背向显示屏一侧的摄像头，也就是说，与传统摄像头一样，它拍摄的是背向设备显示屏一侧的景物。</p>
+<p>设备实现：</p>
+<ul>
+<li>应包含后置摄像头。</li>
+</ul>
+<p>如果设备实现包含至少一个后置摄像头，则：</p>
+<ul>
+<li>[C-1-1] 必须报告功能标记 <code>android.hardware.camera</code> 和 <code>android.hardware.camera.any</code>。</li>
+<li>[C-1-2] <font color="red">分辨率必须至少为 200 万像素。</font></li>
+<li>应在摄像头驱动程序中实现硬件自动对焦或软件自动对焦（对应用软件透明）。</li>
+<li>可以具有固定焦距硬件或 EDOF（扩展景深）硬件。</li>
+<li>可以包含闪光灯。</li>
+</ul>
+<p>如果摄像头包含闪光灯，则：</p>
+<ul>
+<li>[C-2-1] 当已在摄像头预览 Surface 上注册 <code>android.hardware.Camera.PreviewCallback</code> 实例时，<font color="red">闪光灯不得亮起，除非应用已通过启用 <code>FLASH_MODE_AUTO</code> 或 <code>FLASH_MODE_ON</code> 属性（属于 <code>Camera.Parameters</code> 对象）明确启用闪光灯</font>。请注意，此项限制不适用于设备的内置系统摄像头应用，而仅适用于使用 <code>Camera.PreviewCallback</code> 的第三方应用。</li>
+</ul>
+<h2 id="_4">前置摄像头</h2>
+<p>前置摄像头指与设备上的显示屏位于同一侧的摄像头，也就是通常用于拍摄用户自己的摄像头，例如用于视频会议及类似应用的摄像头。</p>
+<p>设备实现：</p>
+<ul>
+<li>可以包含前置摄像头。</li>
+</ul>
+<p>如果设备实现包含至少一个前置摄像头，则：</p>
+<ul>
+<li>[C-1-1] 必须报告功能标记 <code>android.hardware.camera.any</code> 和 <code>android.hardware.camera.front</code>。</li>
+<li>[C-1-2] <font color="red">分辨率必须至少为 VGA（640x480 像素）。</font></li>
+<li>[C-1-3] <font color="red">不得将前置摄像头用作 Camera API 的默认摄像头</font>，并且不得将该 API 配置为将前置摄像头视为默认后置摄像头，即使它是设备上的唯一摄像头也是如此。</li>
+<li>[C-1-4] 如果当前应用已通过调用 <a href="http://developer.android.com/reference/android/hardware/Camera.html#setDisplayOrientation(int)"><code>android.hardware.Camera.setDisplayOrientation()</code></a> 方法明确请求旋转摄像头显示方向，则必须相对于应用指定的方向水平镜像摄像头预览。反之，如果当前应用未通过调用 <a href="http://developer.android.com/reference/android/hardware/Camera.html#setDisplayOrientation(int)"><code>android.hardware.Camera.setDisplayOrientation()</code></a> 方法明确请求旋转摄像头显示方向，则必须沿着设备的默认水平轴镜像预览。</li>
+<li>[C-1-5] 对于最终拍好后返回给应用回调或提交到媒体存储空间的静态图像或视频流，不得对其进行镜像。</li>
+<li>[C-1-6] 必须按照镜像摄像头预览图像流时的方式镜像由 postview 显示的图像。</li>
+<li>可以包含可供后置摄像头使用的功能，例如自动对焦、闪光灯等。</li>
+</ul>
+<p>如果用户能够旋转设备实现（例如通过加速度计自动旋转或通过用户输入手动旋转），则：</p>
+<ul>
+<li>[C-2-1] <font color="red">必须相对于设备的当前方向水平镜像摄像头预览。</font></li>
+</ul>
+<h2 id="_5">外接摄像头</h2>
+<p>设备实现：</p>
+<ul>
+<li>可以支持无需一直连接到设备的外接摄像头。</li>
+</ul>
+<p>如果设备实现支持外接摄像头，则：</p>
+<ul>
+<li>[C-1-1] 必须声明平台功能标记 <code>android.hardware.camera.external</code> 和 <code>android.hardware camera.any</code>。</li>
+<li>[C-1-2] 如果通过 USB 主机端口连接外接摄像头，则必须支持 USB Video Class（UVC 1.0 或更高版本）。</li>
+<li>[C-1-3] 必须在连接实体外接摄像头设备的情况下通过摄像头 CTS 测试。有关摄像头 CTS 测试的详细信息，请参阅 source.android.com。</li>
+<li>应支持 MJPEG 等视频压缩，以便传输高品质的未编码流（即原始照片流或独立压缩的照片流）。</li>
+<li>可以支持多个摄像头。</li>
+<li>可以支持基于摄像头的视频编码。</li>
+</ul>
+<p>如果支持基于摄像头的视频编码，则</p>
+<ul>
+<li>[C-2-1] 并发的未编码/MJPEG 流（QVGA 或更高分辨率）必须可供设备实现访问。</li>
+</ul>
+<h2 id="camera-api"><font color='red'>Camera API行为</font></h2>
+<p><font color="red"><strong>Camera API的行为都比较重要！！！！！，摄像头产出的图片格式如YUV，NV21，YV12克参考<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></strong></font></p>
+<p>Android 包含两个用于访问摄像头的 API 包，较新的 android.hardware.camera2 API 使应用可以对摄像头进行较低级别的控制，包括高效的零复制连拍/视频流，以及按帧对曝光、增益、白平衡增益、颜色转换、去噪、锐化等进行控制。</p>
+<p>较旧的 API 软件包 <code>android.hardware.Camera</code> 在 Android 5.0 中被标为已弃用，但由于该软件包应仍可供应用使用，因此 Android 设备实现必须确保持续支持该 API（如本节和 Android SDK 中所述）。</p>
+<p>已弃用的 android.hardware.Camera 类和较新的 android.hardware.camera2 软件包都具备的功能在这两种 API 中的性能和质量必须相当。例如，具有等效设置，自动对焦速度和精确度必须完全相同，且所拍图片的质量必须相同。依赖这两种 API 的不同语义的功能无需在速度和质量方面保持一致，但应尽可能保持一致。</p>
+<p>设备实现必须为所有可用的摄像头实现摄像头相关 API 的以下行为。设备实现：</p>
+<ul>
+<li>[C-0-1] 对于提供给应用回调的预览数据，必须使用 <code>android.hardware.PixelFormat.YCbCr_420_SP</code>（如果应用从未调用过 <code>android.hardware.Camera.Parameters.setPreviewFormat(int)</code>）。</li>
+<li>[C-0-2] 如果应用注册了 <code>android.hardware.Camera.PreviewCallback</code> 实例，系统调用了 <code>onPreviewFrame()</code> 方法，并且预览格式为 YCbCr_420_SP，则传递到 <code>onPreviewFrame()</code> 中的 byte[] 格式的数据必须进一步采用 NV21 编码格式。也就是说，NV21 必须是默认设置。</li>
+<li>[C-0-3] 必须支持使用 YV12 格式（用 <code>android.graphics.ImageFormat.YV12</code> 常量表示）进行前置摄像头和后置摄像头的摄像头预览（对于 <code>android.hardware.Camera</code>。（硬件视频编码器和摄像头可以使用任何本机像素格式，但设备实现必须支持将其转换为 YV12。）</li>
+<li>[C-0-4] 必须支持使用 <code>android.hardware.ImageFormat.YUV_420_888</code> 和 <code>android.hardware.ImageFormat.JPEG</code> 作为输出格式（通过 <code>android.media.ImageReader</code> API（对于在 <a href="https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics.html#REQUEST_AVAILABLE_CAPABILITIES"><code>android.request.availableCapabilities</code></a> 中通告 <a href="https://developer.android.com/reference/android/hardware/camera2/CameraMetadata.html#REQUEST_AVAILABLE_CAPABILITIES_BACKWARD_COMPATIBLE"><code>REQUEST_AVAILABLE_CAPABILITIES_BACKWARD_COMPATIBLE</code></a> 功能的 <code>android.hardware.camera2</code> 设备）。</li>
+<li>[C-0-5] 仍必须实现 Android SDK 文档中包含的完整 <a href="http://developer.android.com/reference/android/hardware/Camera.html">Camera API</a>，无论设备是否包含硬件自动对焦或其他功能都是如此。例如，没有自动对焦功能的摄像头仍必须调用所有已注册的 <code>android.hardware.Camera.AutoFocusCallback</code> 实例（即使这与非自动对焦摄像头无关）。请注意，这适用于前置摄像头。例如，虽然大多数前置摄像头都不支持自动对焦，但仍必须如所述那样“伪造”API 回调。</li>
+<li>[C-0-6] 必须识别并遵从 <a href="https://developer.android.com/reference/android/hardware/Camera.Parameters.html"><code>android.hardware.Camera.Parameters</code></a> 类和 <a href="https://developer.android.com/reference/android/hardware/camera2/CaptureRequest"><code>android.hardware.camera2.CaptureRequest</code></a> 类中定义为常量的每个参数名称。反之，设备实现不得遵从或识别传递给 <code>android.hardware.Camera.setParameters()</code> 方法的字符串常量，在 <code>android.hardware.Camera.Parameters</code> 中载述为常量的字符串常量除外。也就是说，设备实现必须支持所有标准摄像头参数（如果硬件允许），不得支持自定义摄像头参数类型。例如，如果设备实现支持使用高动态范围 (HDR) 成像技术拍照，则必须支持摄像头参数 <code>Camera.SCENE_MODE_HDR</code>。</li>
+<li>[C-0-7] 必须通过 <a href="https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics.html#INFO_SUPPORTED_HARDWARE_LEVEL"><code>android.info.supportedHardwareLevel</code></a> 属性报告正确的支持级别（如 Android SDK 中所述），并报告相应的<a href="http://source.android.com/devices/camera/versioning.html">框架功能标记</a>。</li>
+<li>[C-0-8] 还必须通过 <code>android.hardware.camera2</code> 属性声明 <code>android.request.availableCapabilities</code> 的各项摄像头功能，并声明相应的<a href="http://source.android.com/devices/camera/versioning.html">功能标记</a>；如果连接的任何摄像头设备支持某项功能，则必须定义相应的功能标记。</li>
+<li>[C-0-9] 每当摄像头拍摄了新照片且相应的照片条目已添加到媒体存储区时，都必须广播 <code>Camera.ACTION_NEW_PICTURE</code> Intent。</li>
+<li>[C-0-10] 每当摄像头录制了新视频且相应的视频条目已添加到媒体存储区时，都必须广播 <code>Camera.ACTION_NEW_VIDEO</code> Intent。</li>
+<li>[C-0-11] 必须使所有摄像头都可通过已弃用的 <a href="https://developer.android.com/reference/android/hardware/Camera"><code>android.hardware.Camera</code></a> API 以及 <a href="https://developer.android.com/reference/android/hardware/camera2/package-summary"><code>android.hardware.camera2</code></a> API 访问。</li>
+<li>[C-SR] 对于多个 RGB 摄像头朝向同一方向的设备，强烈建议支持列出 <a href="https://developer.android.com/reference/android/hardware/camera2/CameraMetadata#REQUEST_AVAILABLE_CAPABILITIES_LOGICAL_MULTI_CAMERA"><code>CameraMetadata.REQUEST_AVAILABLE_CAPABILITIES_LOGICAL_MULTI_CAMERA</code></a> 功能的逻辑摄像头设备，包含所有和物理子设备一样朝向该方向的 RGB 摄像头。</li>
+</ul>
+<p>如果设备实现向第三方应用提供专有摄像头 API，则：</p>
+<ul>
+<li>[C-1-1] 必须使用 <a href="https://developer.android.com/reference/android/hardware/camera2/package-summary"><code>android.hardware.camera2</code></a> API 实现此类摄像头 API。</li>
+<li>可以提供供应商标签和/或 <a href="https://developer.android.com/reference/android/hardware/camera2/package-summary"><code>android.hardware.camera2</code></a> API 扩展。</li>
+</ul>
+<h2 id="_6">摄像头方向</h2>
+<p>如果设备实现具有前置或后置摄像头，则此类摄像头：</p>
+<ul>
+<li>[C-1-1] 必须朝向正确方向，以便摄像头的长度方向与屏幕的长度方向对齐。也就是说，当设备处于横向时，摄像头必须横向拍摄。无论设备的自然方向为何，此规则都适用；也就是说，它适用于以横向为主的设备以及以纵向为主的设备。</li>
+</ul>
+<h3 id="_7">图像编码</h3>
+<p>设备实现必须支持以下图像编码：</p>
+<ul>
+<li>[C-0-1] <code>JPEG</code></li>
+<li>[C-0-2] <code>PNG</code></li>
+<li>[C-0-3] <code>WebP</code></li>
+</ul>
+<p>如果设备实现支持通过 <code>android.media.MediaCodec</code> 对媒体类型 <a href="https://developer.android.com/reference/android/media/MediaFormat.html#MIMETYPE_IMAGE_ANDROID_HEIC"><code>MIMETYPE_IMAGE_ANDROID_HEIC</code></a> 进行 HEIC 编码，则：</p>
+<ul>
+<li>[C-1-1] 必须提供支持 <a href="https://developer.android.com/reference/android/media/MediaCodecInfo.EncoderCapabilities.html#BITRATE_MODE_CQ"><code>BITRATE_MODE_CQ</code></a> 比特率控制模式、<a href="https://developer.android.com/reference/android/media/MediaCodecInfo.CodecProfileLevel.html#HEVCProfileMainStill"><code>HEVCProfileMainStill</code></a> 配置文件和 <code>512 x 512 px</code> 帧尺寸的硬件加速 <code>HEVC</code> 编码器编解码器。</li>
+</ul>
+<h3 id="_8">图像解码</h3>
+<p>设备实现必须支持以下图像解码：</p>
+<ul>
+<li>[C-0-1] <code>JPEG</code></li>
+<li>[C-0-2] <code>GIF</code></li>
+<li>[C-0-3] <code>PNG</code></li>
+<li>[C-0-4] <code>BMP</code></li>
+<li>[C-0-5] <code>WebP</code></li>
+<li>[C-0-6] <code>Raw</code></li>
+<li>[C-0-7] <code>HEIF (HEIC)</code></li>
+</ul>
+<p>通过 <a href="https://developer.android.com/reference/android/media/MediaCodec">MediaCodec</a> API 公开的图像编码器和解码器</p>
+<ul>
+<li>[C-1-1] 必须通过 <a href="https://developer.android.com/reference/android/media/MediaCodecInfo.CodecCapabilities"><code>CodecCapabilities</code></a> 支持 YUV420 8:8:8 灵活颜色格式 (<code>COLOR_FormatYUV420Flexible</code>)。</li>
+<li>[SR] 强烈建议支持用于输入 Surface 模式的 RGB888 颜色格式。</li>
+<li>[C-1-3] 必须至少支持一个平面或半平面 YUV420 8:8:8 颜色格式：<code>COLOR_FormatYUV420PackedPlanar</code>（等同于 <code>COLOR_FormatYUV420Planar</code>）或 <code>COLOR_FormatYUV420PackedSemiPlanar</code>（等同于 <code>COLOR_FormatYUV420SemiPlanar</code>）。强烈建议同时支持二者。</li>
+</ul>
+<h3 id="_9">视频编解码器</h3>
+<table>
+<thead>
+<tr>
+<th align="left">格式/编解码器</th>
+<th align="left">支持文件类型</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">H.263</td>
+<td align="left"><code>3GPP (.3gp)</code>  <code>MPEG-4 (.mp4)</code>  <code>Matroska（.mkv、仅适用于解码)</code></td>
+</tr>
+<tr>
+<td align="left">H.264 AVC</td>
+<td align="left"><code>3GPP (.3gp)</code>  <code>MPEG-2 TS (.ts,不可查找)</code>   <br> <code>MPEG-4 (.mp4)</code>  <code>Matroska（.mkv、仅适用于解码)</code></td>
+</tr>
+<tr>
+<td align="left">H.265 HEVC</td>
+<td align="left"><code>MPEG-4 (.mp4)</code>  <code>Matroska（.mkv、仅适用于解码)</code></td>
+</tr>
+<tr>
+<td align="left">MPEG-2</td>
+<td align="left"><code>MPEG-2 TS (.ts,不可查找)</code>  <code>MPEG-4 (.mp4)</code>  <code>Matroska（.mkv、仅适用于解码)</code></td>
+</tr>
+<tr>
+<td align="left">MPEG-4 SP</td>
+<td align="left"><code>3GPP (.3gp)</code>  <code>MPEG-4 (.mp4)</code>  <code>Matroska（.mkv、仅适用于解码)</code></td>
+</tr>
+<tr>
+<td align="left">VP8</td>
+<td align="left"><code>WebM (.webm)</code> <code>Matroska (.mkv)</code></td>
+</tr>
+<tr>
+<td align="left">VP9</td>
+<td align="left"><code>WebM (.webm)</code> <code>Matroska (.mkv)</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="_10">视频编码</h3>
+<p>如果设备实现支持任何视频编码器，并使其可供第三方应用使用，则：</p>
+<ul>
+<li>采用两个滑窗时，比帧内 (I-frame) 间隔之间的比特率高出的幅度不应超过 15% 左右。</li>
+<li>比采用一个 1 秒的滑窗时的比特率高出的幅度不应超过 100% 左右。</li>
+</ul>
+<p>如果设备实现包含对角线长度至少为 2.5 英寸的嵌入式显示屏，或包含视频输出端口，或通过 <code>android.hardware.camera.any</code> 功能标记声明支持摄像头，则：</p>
+<ul>
+<li>[C-1-1] 必须支持至少一个 VP8 或 H.264 视频编码器，并使其可供第三方应用使用。</li>
+<li>应同时支持 VP8 和 H.264 视频编码器，并使其可供第三方应用使用。</li>
+</ul>
+<p>如果设备实现支持 H.264、VP8、VP9 或 HEVC 视频编码器中的任何一个，并使其可供第三方应用使用，则：</p>
+<ul>
+<li>[C-2-1] 必须支持可动态配置的比特率。</li>
+<li>应支持可变帧速率，在这种情况下，视频编码器应根据输入缓存的时间戳来确定瞬时帧时长，并根据该时长来分配其位存储分区。</li>
+</ul>
+<p>如果设备实现支持 MPEG-4 SP 视频编码器，并使其可供第三方应用使用，则：</p>
+<ul>
+<li>应针对支持的编码器支持可动态配置的比特率。</li>
+</ul>
+<p>如果设备实现提供硬件加速视频或图片编码器，并且支持一个或多个通过 <code>android.camera</code> API 公开的已连接或可插拔硬件摄像头，则：</p>
+<ul>
+<li>[C-4-1] 所有硬件加速视频和图片编码器都必须支持从硬件摄像头编码帧。</li>
+<li>应支持通过所有视频或图片编码器从硬件摄像头编码帧。</li>
+</ul>
+<h4 id="h263"><strong>H.263</strong></h4>
+<p>如果设备实现支持 H.263 编码器，并使其可供第三方应用使用，则：</p>
+<ul>
+<li>[C-1-1] 必须支持 Baseline Profile Level 45。</li>
+<li>应针对支持的编码器支持可动态配置的比特率。</li>
+</ul>
+<h4 id="h264"><strong>H.264</strong></h4>
+<p>如果设备实现支持 H.264 编解码器，则：</p>
+<ul>
+<li>[C-1-1] 必须支持 Baseline Profile Level 3。不过，可以选择是否支持 ASO（任意切片顺序）、FMO（灵活宏块顺序）和 RS（冗切片）。此外，为了保持与其他 Android 设备兼容，对于 Baseline Profile，建议编码器不要使用 ASO、FMO 和 RS。</li>
+<li>[C-1-2] 必须支持下表中的标清视频编码配置。</li>
+<li>应支持 Main Profile Level 4。</li>
+<li>应支持下表中所列的高清视频编码配置。</li>
+</ul>
+<p>如果设备实现通过媒体 API 报告支持对分辨率为 720p 或 1080p 的视频进行 H.264 编码，则：</p>
+<ul>
+<li>[C-2-1] 必须支持下表中的编码配置。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">标清（低画质）</th>
+<th align="left">标清（高画质）</th>
+<th align="left">高清 720p</th>
+<th align="left">高清 1080p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">视频分辨率</td>
+<td align="left">320 x 240 像素</td>
+<td align="left">720 x 480 像素</td>
+<td align="left">1280 x 720 像素</td>
+<td align="left">1920 x 1080 像素</td>
+</tr>
+<tr>
+<td align="left">视频帧速率</td>
+<td align="left">20 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+</tr>
+<tr>
+<td align="left">视频比特率</td>
+<td align="left">384 Kbps</td>
+<td align="left">2 Mbps</td>
+<td align="left">4 Mbps</td>
+<td align="left">10 Mbps</td>
+</tr>
+</tbody>
+</table>
+<h4 id="vp8"><strong>VP8</strong></h4>
+<p>如果设备实现支持 VP8 编解码器，则：</p>
+<ul>
+<li>[C-1-1] 必须支持标清视频编码配置。</li>
+<li>应支持以下高清视频编码配置。</li>
+<li>[C-1-2] 必须支持写入 Matroska WebM 文件。</li>
+<li>应提供满足 <a href="http://www.webmproject.org/hardware/rtc-coding-requirements">WebM 项目 RTC 硬件编码要求</a>的硬件 VP8 编解码器，以确保网络视频流和视频会议服务的质量达到可接受的水平。</li>
+</ul>
+<p>如果设备实现通过媒体 API 报告支持对分辨率为 720p 或 1080p 的视频进行 VP8 编码，则：</p>
+<ul>
+<li>[C-2-1] 必须支持下表中的编码配置。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">标清（低画质）</th>
+<th align="left">标清（高画质）</th>
+<th align="left">高清 720p</th>
+<th align="left">高清 1080p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">视频分辨率</td>
+<td align="left">320 x 180 像素</td>
+<td align="left">640 x 360 像素</td>
+<td align="left">1280 x 720 像素</td>
+<td align="left">1920 x 1080 像素</td>
+</tr>
+<tr>
+<td align="left">视频帧速率</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+</tr>
+<tr>
+<td align="left">视频比特率</td>
+<td align="left">800 Kbps</td>
+<td align="left">2 Mbps</td>
+<td align="left">4 Mbps</td>
+<td align="left">10 Mbps</td>
+</tr>
+</tbody>
+</table>
+<h4 id="vp9"><strong>VP9</strong></h4>
+<p>如果设备实现支持 VP9 编解码器，则：</p>
+<ul>
+<li>[C-1-2] 必须支持 Profile 0 Level 3。</li>
+<li>[C-1-1] 必须支持写入 Matroska WebM 文件。</li>
+<li>[C-1-3] 必须生成 <a href="https://www.webmproject.org/docs/container/#vp9-codec-feature-metadata-codecprivate">CodecPrivate</a> 数据。</li>
+<li>应支持下表中所列的高清解码配置。</li>
+<li>[SR] 最好支持下表中所列的高清解码配置（如果有硬件编码器）（）。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">标清</th>
+<th align="left">高清 720p</th>
+<th align="left">高清 1080p</th>
+<th align="left">超高清</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">视频分辨率</td>
+<td align="left">720 x 480 像素</td>
+<td align="left">1280 x 720 像素</td>
+<td align="left">1920 x 1080 像素</td>
+<td align="left">3840 x 2160 像素</td>
+</tr>
+<tr>
+<td align="left">视频帧速率</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+</tr>
+<tr>
+<td align="left">视频比特率</td>
+<td align="left">1.6 Mbps</td>
+<td align="left">4 Mbps</td>
+<td align="left">5 Mbps</td>
+<td align="left">20 Mbps</td>
+</tr>
+</tbody>
+</table>
+<p>如果设备实现声明通过媒体 API 支持 Profile 2 或 Profile 3：</p>
+<ul>
+<li>可选择是否支持 12 位格式。</li>
+</ul>
+<h4 id="h265"><strong>H.265</strong></h4>
+<p>如果设备实现支持 H.265 编解码器，则：</p>
+<ul>
+<li>[C-1-1] 必须支持 Main Profile Level 3。</li>
+<li>应支持下表中所列的高清编码配置。</li>
+<li>[SR] 强烈建议支持下表中所列的高清编码配置（如果有硬件编码器的话）。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">标清</th>
+<th align="left">高清 720p</th>
+<th align="left">高清 1080p</th>
+<th align="left">超高清</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">视频分辨率</td>
+<td align="left">720 x 480 像素</td>
+<td align="left">1280 x 720 像素</td>
+<td align="left">1920 x 1080 像素</td>
+<td align="left">3840 x 2160 像素</td>
+</tr>
+<tr>
+<td align="left">视频帧速率</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+</tr>
+<tr>
+<td align="left">视频比特率</td>
+<td align="left">1.6 Mbps</td>
+<td align="left">4 Mbps</td>
+<td align="left">5 Mbps</td>
+<td align="left">20 Mbps</td>
+</tr>
+</tbody>
+</table>
+<h3 id="_11">视频解码</h3>
+<p>如果设备实现支持 VP8、VP9、H.264 或 H.265 编解码器，则：</p>
+<ul>
+<li>[C-1-1] 对于所有 VP8、VP9、H.264 和 H.265 编解码器，都必须支持通过标准 Android API 在同一视频流内实时进行动态视频分辨率和帧速率切换，并且能够支持设备上每个编解码器所支持的最大分辨率。</li>
+</ul>
+<h4 id="mpeg-2"><strong>MPEG-2</strong></h4>
+<p>如果设备实现支持 MPEG-2 解码器，则：</p>
+<ul>
+<li>[C-1-1] 必须支持 Main Profile High Level。</li>
+</ul>
+<h4 id="h263_1"><strong>H.263</strong></h4>
+<p>如果设备实现支持 H.263 解码器，则：</p>
+<ul>
+<li>[C-1-1] 必须支持 Baseline Profile Level 30 和 Level 45。</li>
+</ul>
+<h4 id="mpeg-4"><strong>MPEG-4</strong></h4>
+<p>如果设备实现具有 MPEG-4 解码器，则：</p>
+<ul>
+<li>[C-1-1] 必须支持 Simple Profile Level 3。</li>
+</ul>
+<h4 id="h264_1"><strong>H.264</strong></h4>
+<p>如果设备实现支持 H.264 解码器，则：</p>
+<ul>
+<li>[C-1-1] 必须支持 Main Profile Level 3.1 和 Baseline Profile。可以选择是否支持 ASO（任意切片顺序）、FMO（灵活宏块顺序）和 RS（冗切片）。</li>
+<li>[C-1-2] 必须能够对以下视频进行解码：采用下表中所列的标清配置，且使用 Baseline Profile 和 Main Profile Level 3.1（包括 720p30）编码的视频。</li>
+<li>应能够对采用下表中所列高清配置的视频进行解码。</li>
+</ul>
+<p>如果 <code>Display.getSupportedModes()</code> 方法报告的高度等于或大于视频分辨率，则设备实现：</p>
+<ul>
+<li>[C-2-1] 必须支持下表中的高清 720p 视频解码配置。</li>
+<li>[C-2-2] 必须支持下表中的高清 1080p 视频解码配置。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">标清（低画质）</th>
+<th align="left">标清（高画质）</th>
+<th align="left">高清 720p</th>
+<th align="left">高清 1080p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">视频分辨率</td>
+<td align="left">320 x 240 像素</td>
+<td align="left">720 x 480 像素</td>
+<td align="left">1280 x 720 像素</td>
+<td align="left">1920 x 1080 像素</td>
+</tr>
+<tr>
+<td align="left">视频帧速率</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">60 fps</td>
+<td align="left">30 fps (60 fpsTV)</td>
+</tr>
+<tr>
+<td align="left">视频比特率</td>
+<td align="left">800 Kbps</td>
+<td align="left">2 Mbps</td>
+<td align="left">8 Mbps</td>
+<td align="left">20 Mbps</td>
+</tr>
+</tbody>
+</table>
+<h4 id="h265-hevc"><strong>H.265 (HEVC)</strong></h4>
+<p>如果设备实现支持 H.265 编解码器，则：</p>
+<ul>
+<li>[C-1-1] 必须支持 Main Profile Level 3 Main Tier 和下表中所列的标清视频解码配置。</li>
+<li>应支持下表中所列的高清解码配置。</li>
+<li>[C-1-2] 必须支持下表中所列的高清解码配置（如果有硬件解码器的话）。</li>
+</ul>
+<p>如果 <code>Display.getSupportedModes()</code> 方法报告的高度等于或大于视频分辨率，则：</p>
+<ul>
+<li>[C-2-1] 设备实现必须至少支持 720、1080 和超高清配置的 H.265 或 VP9 解码之一。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">标清（低画质）</th>
+<th align="left">标清（高画质）</th>
+<th align="left">高清 720p</th>
+<th align="left">高清 1080p</th>
+<th align="left">超高清</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">视频分辨率</td>
+<td align="left">352 x 288 像素</td>
+<td align="left">720 x 480 像素</td>
+<td align="left">1280 x 720 像素</td>
+<td align="left">1920 x 1080 像素</td>
+<td align="left">3840 x 2160 像素</td>
+</tr>
+<tr>
+<td align="left">视频帧速率</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30/60 fps（60 fps采用 H.265 硬件解码的 TV）</td>
+<td align="left">60 fps</td>
+</tr>
+<tr>
+<td align="left">视频比特率</td>
+<td align="left">600 Kbps</td>
+<td align="left">1.6 Mbps</td>
+<td align="left">4 Mbps</td>
+<td align="left">5 Mbps</td>
+<td align="left">20 Mbps</td>
+</tr>
+</tbody>
+</table>
+<p>如果设备实现声明通过媒体 API 支持 HDR 配置，则：</p>
+<ul>
+<li>[C-3-1] 设备实现必须从应用中接受所需的 HDR 元数据，以及支持从比特流和/或容器提取和输出所需的 HDR 元数据。</li>
+<li>[C-3-2] 设备实现必须在设备屏幕或标准视频输出端口（如 HDMI）上正确显示 HDR 内容。</li>
+</ul>
+<h4 id="vp8_1"><strong>VP8</strong></h4>
+<p>如果设备实现支持 VP8 编解码器，则：</p>
+<ul>
+<li>[C-1-1] 必须支持下表中的标清解码配置。</li>
+<li>应使用满足<a href="https://source.android.com/compatibility/10/android-10-cdd">要求</a>的硬件 VP8 编解码器。</li>
+<li>应支持下表中的高清解码配置。</li>
+</ul>
+<p>如果 <code>Display.getSupportedModes()</code> 方法报告的高度等于或大于视频分辨率，则：</p>
+<ul>
+<li>[C-2-1] 设备实现必须支持下表中的 720p 配置。</li>
+<li>[C-2-2] 设备实现必须支持下表中的 1080p 配置。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">标清（低画质）</th>
+<th align="left">标清（高画质）</th>
+<th align="left">高清 720p</th>
+<th align="left">高清 1080p</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">视频分辨率</td>
+<td align="left">320 x 180 像素</td>
+<td align="left">640 x 360 像素</td>
+<td align="left">1280 x 720 像素</td>
+<td align="left">1920 x 1080 像素</td>
+</tr>
+<tr>
+<td align="left">视频帧速率</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps (60 fpsTV)</td>
+<td align="left">30 (60 fpsTV)</td>
+</tr>
+<tr>
+<td align="left">视频比特率</td>
+<td align="left">800 Kbps</td>
+<td align="left">2 Mbps</td>
+<td align="left">8 Mbps</td>
+<td align="left">20 Mbps</td>
+</tr>
+</tbody>
+</table>
+<h4 id="vp9_1"><strong>VP9</strong></h4>
+<p>如果设备实现支持 VP9 编解码器，则：</p>
+<ul>
+<li>[C-1-1] 必须支持下表中所列的标清视频解码配置。</li>
+<li>应支持下表中所列的高清解码配置。</li>
+</ul>
+<p>如果设备实现支持 VP9 编解码器和硬件解码器，则：</p>
+<ul>
+<li>[C-2-1] 必须支持下表中所列的高清解码配置。</li>
+</ul>
+<p>如果 <code>Display.getSupportedModes()</code> 方法报告的高度等于或大于视频分辨率，则：</p>
+<ul>
+<li>[C-3-1] 设备实现必须至少支持 720、1080 和超高清配置的 VP9 或 H.265 解码之一。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left"></th>
+<th align="left">标清（低画质）</th>
+<th align="left">标清（高画质）</th>
+<th align="left">高清 720p</th>
+<th align="left">高清 1080p</th>
+<th align="left">超高清</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">视频分辨率</td>
+<td align="left">320 x 180 像素</td>
+<td align="left">640 x 360 像素</td>
+<td align="left">1280 x 720 像素</td>
+<td align="left">1920 x 1080 像素</td>
+<td align="left">3840 x 2160 像素</td>
+</tr>
+<tr>
+<td align="left">视频帧速率</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps</td>
+<td align="left">30 fps（60 fps采用 VP9 硬件解码的 TV）</td>
+<td align="left">60 fps</td>
+</tr>
+<tr>
+<td align="left">视频比特率</td>
+<td align="left">600 Kbps</td>
+<td align="left">1.6 Mbps</td>
+<td align="left">4 Mbps</td>
+<td align="left">5 Mbps</td>
+<td align="left">20 Mbps</td>
+</tr>
+</tbody>
+</table>
+<p>如果设备实现声明通过 <a href="https://developer.android.com/reference/android/media/MediaCodecInfo.CodecProfileLevel">&lsquo;CodecProfileLevel&rsquo;</a> 媒体 API 支持 <code>VP9Profile2</code> 或 <code>VP9Profile3</code>，则：</p>
+<ul>
+<li>可选择是否支持 12 位格式。</li>
+</ul>
+<p>如果设备实现声明通过媒体 API 支持 HDR 配置文件（<code>VP9Profile2HDR</code>、<code>VP9Profile2HDR10Plus</code>、<code>VP9Profile3HDR</code>、<code>VP9Profile3HDR10Plus</code>）：</p>
+<ul>
+<li>[C-4-1] 设备实现必须从应用中接受所需的 HDR 元数据（对于所有 HDR 配置文件，应接受 <a href="https://developer.android.com/reference/android/media/MediaFormat.html#KEY_HDR_STATIC_INFO"><code>KEY_HDR_STATIC_INFO</code></a>，而对于 HDR10Plus 配置文件，则应接受 <a href="https://developer.android.com/reference/android/media/MediaFormat.html#KEY_HDR10_PLUS_INFO">&lsquo;KEY_HDR10_PLUS_INFO&rsquo;</a>）。它们还必须支持从比特流和/或容器中提取和输出所需的 HDR 元数据。</li>
+<li>[C-4-2] 设备实现必须在设备屏幕或标准视频输出端口（如 HDMI）上正确显示 HDR 内容。</li>
+</ul>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p><a href="https://source.android.com/compatibility/10/android-10-cdd#7_5_cameras">Android 10.0兼容性文档</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="../camera_1/">Camera理论知识和基本原理</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../../../js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = "../../.."</script>
+    
+    <script src="../../../js/base.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="../../../search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>
