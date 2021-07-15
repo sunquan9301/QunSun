@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="the homepage of Scott Sun">
+    
+    <link rel="canonical" href="https://qsun97.com/linux/sed/">
+    <link rel="shortcut icon" href="../../img/favicon.ico">
+
+    
+    <title>深入理解Sed - Quan Sun</title>
+    
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/v4-shims.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/hack-font@3.3.0/build/web/hack.min.css">
+    <link href='//rsms.me/inter/inter.css' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,400,300,600,700&subset=latin-ext,latin' rel='stylesheet' type='text/css'>
+    <link href="../../css/bootstrap-custom.min.css" rel="stylesheet">
+    <link href="../../css/base.min.css" rel="stylesheet">
+    <link href="../../css/cinder.min.css" rel="stylesheet">
+
+    
+        
+        <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/styles/github.min.css">
+        
+    
+    <link href="../../css/style.css" rel="stylesheet">
+    <link href="../../css/admonition_fix.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+            <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+        <![endif]-->
+
+    
+
+     
+</head>
+
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            
+
+            <!-- Main title -->
+
+            
+              <a class="navbar-brand" href="../..">Quan Sun</a>
+            
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                
+                
+                    <li >
+                        <a href="../..">Home</a>
+                    </li>
+                
+                
+                
+                    <li class="dropdown active">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Blog <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                        
+                            
+<li >
+    <a href="../../blog/">文章汇总</a>
+</li>
+
+                        
+                            
+  <li class="dropdown-submenu">
+    <a tabindex="-1" href="">Linux</a>
+    <ul class="dropdown-menu">
+        
+            
+<li >
+    <a href="../shell/">深入理解Shell脚本</a>
+</li>
+
+        
+            
+<li >
+    <a href="../vim/">深入理解Vim</a>
+</li>
+
+        
+            
+<li >
+    <a href="../awk/">深入理解Awk</a>
+</li>
+
+        
+            
+<li class="active">
+    <a href="./">深入理解Sed</a>
+</li>
+
+        
+    </ul>
+  </li>
+
+                        
+                        </ul>
+                    </li>
+                
+                
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                            <i class="fas fa-search"></i> Search
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="../awk/">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li class="disabled">
+                        <a rel="next" >
+                            Next <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+    <div class="container">
+        
+        
+        <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="first-level active"><a href="#_1">简介</a></li>
+        <li class="first-level "><a href="#benchmarks">Benchmarks</a></li>
+            <li class="second-level"><a href="#bbs_list">bbs_list</a></li>
+                
+            <li class="second-level"><a href="#inventory-shipped">inventory-shipped</a></li>
+                
+            <li class="second-level"><a href="#e1-replace-555-to-444-in-bbs_list">e1. replace 555 to 444 in bbs_list</a></li>
+                
+        <li class="first-level "><a href="#sed-process-format">Sed Process Format</a></li>
+        <li class="first-level "><a href="#command-line-opts">Command-Line Opts</a></li>
+        <li class="first-level "><a href="#program">Program</a></li>
+        <li class="first-level "><a href="#often-used-commands">Often-Used Commands</a></li>
+        <li class="first-level "><a href="#_2">小结</a></li>
+    </ul>
+</div></div>
+        <div class="col-md-9" role="main">
+
+<h1>深入理解Sed</h1>
+
+<h2 id="_1">简介</h2>
+<p><code>man sed</code></p>
+<pre><code class="language-bash">NAME
+     sed -- stream editor
+
+SYNOPSIS
+     sed [-Ealn] command [file ...]
+     sed [-Ealn] [-e command] [-f command_file] [-i extension] [file ...]
+
+DESCRIPTION
+     The sed utility reads the specified files, or the standard input if no files are specified, modifying the
+     input as specified by a list of commands.  The input is then written to the standard output.
+</code></pre>
+<ul>
+<li>awk is a <code>stream editor</code>.</li>
+</ul>
+<h2 id="benchmarks">Benchmarks</h2>
+<h3 id="bbs_list">bbs_list</h3>
+<p>each row is </p>
+<ul>
+<li><code>a computer bulletin board</code></li>
+<li><code>phone number</code></li>
+<li><code>baud rate</code></li>
+<li><code>a code</code>. </li>
+</ul>
+<pre><code class="language-markdown"> aardvark    555-5553    1200/300          B
+ alpo-net    555-3412    2400/1200/300     A
+ barfly      555-7685    1200/300          A
+ bites       555-1675    2400/1200/300     A
+ camelot     555-0542    300               C
+ core        555-2912    1200/300          C
+ fooey       555-1234    2400/1200/300     B
+ foot        555-6699    1200/300          B
+ macfoo      555-6480    1200/300          A
+ sdace       555-3430    2400/1200/300     A
+ sabafoo     555-2127    1200/300          C
+</code></pre>
+<h3 id="inventory-shipped">inventory-shipped</h3>
+<p>each row is</p>
+<ul>
+<li><code>year</code></li>
+<li><code>green crates shipped</code></li>
+<li><code>red boxes shipped</code></li>
+<li><code>orange bags shipped</code></li>
+<li><code>blue packages shipped</code></li>
+</ul>
+<pre><code class="language-markdown"> Jan  13  25  15 115
+ Feb  15  32  24 226
+ Mar  15  24  34 228
+ Apr  31  52  63 420
+ May  16  34  29 208
+ Jun  31  42  75 492
+ Jul  24  34  67 436
+ Aug  15  34  47 316
+ Sep  13  55  37 277
+ Oct  29  54  68 525
+ Nov  20  87  82 577
+ Dec  17  35  61 401
+ Jan  21  36  64 620
+ Feb  26  58  80 652
+ Mar  24  75  70 495
+ Apr  21  70  74 514
+</code></pre>
+<h3 id="e1-replace-555-to-444-in-bbs_list">e1. replace 555 to 444 in bbs_list</h3>
+<pre><code class="language-bash">sed 's/555/444/' bbs_list
+aardvark    555-5553    1200/300          B
+alpo-net    555-3412    2400/1200/300     A
+barfly      555-7685    1200/300          A
+bites       555-1675    2400/1200/300     A
+camelot     555-0542    300               C
+core        555-2912    1200/300          C
+fooey       555-1234    2400/1200/300     B
+foot        555-6699    1200/300          B
+macfoo      555-6480    1200/300          A
+sdace       555-3430    2400/1200/300     A
+sabafoo     555-2127    1200/300          C
+</code></pre>
+<h2 id="sed-process-format">Sed Process Format</h2>
+<ol>
+<li>
+<p><em>sed &lsquo;program&rsquo; input-file1 input-file2</em></p>
+</li>
+<li>
+<p><em>sed -f program-file input-file1 input-file2</em></p>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th align="left">Sed Examples</th>
+<th align="left">解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>sed ’s/hello/world/’ input.txt &gt; output.txt</em></td>
+<td align="left">hello -&gt; world 并输出到output.txt</td>
+</tr>
+<tr>
+<td align="left"><em>sed ’s/hello/world/’ &lt; input.txt &gt; output.txt</em></td>
+<td align="left">同上</td>
+</tr>
+<tr>
+<td align="left"><em>cat input.txt | sed ’s/hello/world/’ - &gt; output.txt</em></td>
+<td align="left">input-file is <code>-</code>，sed receive standard input</td>
+</tr>
+<tr>
+<td align="left"><em>sed -i ’s/hello/world/’ file.txt</em></td>
+<td align="left">use -i to process and edit file.txt</td>
+</tr>
+</tbody>
+</table>
+<h2 id="command-line-opts">Command-Line Opts</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Opts</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>-e 'program'</code></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>-f program-file</code></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td align="left"><code>-i</code></td>
+<td align="left">编辑当前文件</td>
+</tr>
+<tr>
+<td align="left"><code>-l</code></td>
+<td align="left">Make output line buffered.</td>
+</tr>
+<tr>
+<td align="left"><code>-n</code></td>
+<td align="left">不把处理过程输出到屏幕上</td>
+</tr>
+<tr>
+<td align="left"><code>p</code> with <code>-n</code> 输出特定行：</td>
+<td align="left"><em>sed -n ’3p’ file.txt</em></td>
+</tr>
+<tr>
+<td align="left"><code>exit 0</code></td>
+<td align="left">succ</td>
+</tr>
+<tr>
+<td align="left"><code>exit 1</code></td>
+<td align="left">invalid command</td>
+</tr>
+<tr>
+<td align="left"><code>exit 2</code></td>
+<td align="left">多个文件处理其中一个文件打不开</td>
+</tr>
+<tr>
+<td align="left"><code>exit 4</code></td>
+<td align="left">IO error</td>
+</tr>
+</tbody>
+</table>
+<h2 id="program">Program</h2>
+<p><code>sed</code> ：<code>[addr]X[options]</code></p>
+<ul>
+<li><code>[addr]</code> ：a single line number、a regular expression、a range of lines</li>
+<li><code>X</code> ：action</li>
+<li><code>[options]</code> ：additional opts</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">Opts</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>sed &lsquo;30,35d&rsquo; input.txt &gt; output.txt</em></td>
+<td align="left">30,35([addr] range of lines)；d(delete) action</td>
+</tr>
+<tr>
+<td align="left"><em>sed &lsquo;/^foo/q45&rsquo; input.txt &gt; output.txt</em></td>
+<td align="left">/^foo/([addr] regular expression) ; q(quit)；42（the opt of q)</td>
+</tr>
+<tr>
+<td align="left"><em>sed &lsquo;/^foo/d ; s/hello/world/&rsquo; input.txt &gt; output.txt</em></td>
+<td align="left">删除开头为foo，替换hello为world</td>
+</tr>
+<tr>
+<td align="left"><code>-l</code></td>
+<td align="left">Make output line buffered.</td>
+</tr>
+<tr>
+<td align="left"><code>-n</code></td>
+<td align="left">不把处理过程输出到屏幕上</td>
+</tr>
+<tr>
+<td align="left"><code>p</code> with <code>-n</code> 输出特定行：</td>
+<td align="left"><em>sed -n ’3p’ file.txt</em></td>
+</tr>
+<tr>
+<td align="left">exit 0</td>
+<td align="left">succ</td>
+</tr>
+<tr>
+<td align="left">exit 1</td>
+<td align="left">invalid command</td>
+</tr>
+<tr>
+<td align="left">exit 2</td>
+<td align="left">多个文件处理其中一个文件打不开</td>
+</tr>
+<tr>
+<td align="left">exit 4</td>
+<td align="left">IO error</td>
+</tr>
+</tbody>
+</table>
+<h2 id="often-used-commands">Often-Used Commands</h2>
+<table>
+<thead>
+<tr>
+<th align="left">Commands</th>
+<th align="left">说明</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><em>a\<br/>text</em></td>
+<td align="left">1.append text after a line<br>2.命令行输入\直接按回车即可<br>3.用script脚本，则换行即可</td>
+<td><em>sed &lsquo;3a\<br>hello &lsquo; bbs_list</em></td>
+</tr>
+<tr>
+<td align="left"><code>d</code></td>
+<td align="left">删除选中的行</td>
+<td><em>seq 5 | sed &lsquo;2,4d&rsquo;</em></td>
+</tr>
+<tr>
+<td align="left"><code>q[exit-code]</code></td>
+<td align="left">匹配的addr处quit</td>
+<td><em>seq 5 | sed &lsquo;2q&rsquo;</em></td>
+</tr>
+<tr>
+<td align="left"><code>p</code></td>
+<td align="left">和<code>-n</code>一起使用打印对应行</td>
+<td><em>seq 5 | sed -n &lsquo;3p&rsquo;</em></td>
+</tr>
+<tr>
+<td align="left"><code>n</code></td>
+<td align="left">skip lines</td>
+<td><em>seq 8 | sed &lsquo;n;n;s/./x/&rsquo;</em></td>
+</tr>
+<tr>
+<td align="left"><code>c</code></td>
+<td align="left">替换选中行</td>
+<td>seq 8 | sed &lsquo;2c\<br>hahaha<br>&lsquo;</td>
+</tr>
+<tr>
+<td align="left"><code>i</code></td>
+<td align="left">insert before select lines</td>
+<td>seq 8 | sed &lsquo;2i\<br>haa<br>&lsquo;</td>
+</tr>
+<tr>
+<td align="left"><code>s/regexp/replacement/flag</code></td>
+<td align="left">1. s/v1/v2/g : apply the replace to all matches<br>2.  s/v1/v2/num : the numth matches</td>
+<td><em>1. echo 1,1,1,1,1 | sed &lsquo;s/1/2/g&rsquo;<br>2. echo 1,1,1,1,1 | sed &lsquo;s/1/3/3&rsquo;</em></td>
+</tr>
+</tbody>
+</table>
+<h2 id="_2">小结</h2>
+<ol>
+<li>
+<p>sed 常见于处理批量文本替换功能</p>
+</li>
+<li>
+<p>相比较sed，awk的功能更加丰富，awk也一定程度上包含了sed的功能，不过awk常用处理明确列数的数据文件</p>
+</li>
+</ol></div>
+        
+        
+    </div>
+
+    
+      <footer class="col-md-12 text-center">
+          
+          
+            <hr>
+            <p>
+            <small>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</small>
+            </p>
+          
+
+          
+          
+      </footer>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="../../js/bootstrap-3.0.3.min.js"></script>
+
+    
+    <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.0/build/highlight.min.js"></script>
+        
+    <script>hljs.initHighlightingOnLoad();</script>
+    
+
+    <script>var base_url = "../.."</script>
+    
+    <script src="../../js/base.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script src="../../search/main.js"></script>
+
+    <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <span aria-hidden="true">&times;</span>
+                    <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+    </body>
+
+</html>
