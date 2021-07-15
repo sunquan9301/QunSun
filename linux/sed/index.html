@@ -185,7 +185,7 @@ DESCRIPTION
      input as specified by a list of commands.  The input is then written to the standard output.
 </code></pre>
 <ul>
-<li>awk is a <code>stream editor</code>.</li>
+<li>sed is a <code>stream editor</code>.</li>
 </ul>
 <h2 id="benchmarks">Benchmarks</h2>
 <h3 id="bbs_list">bbs_list</h3>
@@ -236,7 +236,17 @@ DESCRIPTION
 </code></pre>
 <h3 id="e1-replace-555-to-444-in-bbs_list">e1. replace 555 to 444 in bbs_list</h3>
 <pre><code class="language-bash">sed 's/555/444/' bbs_list
-aardvark    555-5553    1200/300          B
+aardvark    444-5553    1200/300          B
+alpo-net    444-3412    2400/1200/300     A
+barfly      444-7685    1200/300          A
+bites       444-1675    2400/1200/300     A
+camelot     444-0542    300               C
+core        444-2912    1200/300          C
+fooey       444-1234    2400/1200/300     B
+foot        444-6699    1200/300          B
+macfoo      444-6480    1200/300          A
+sdace       444-3430    2400/1200/300     A
+sabafoo     444-2127    1200/300          Caardvark    555-5553    1200/300          B
 alpo-net    555-3412    2400/1200/300     A
 barfly      555-7685    1200/300          A
 bites       555-1675    2400/1200/300     A
@@ -360,34 +370,6 @@ sabafoo     555-2127    1200/300          C
 <tr>
 <td align="left"><em>sed &lsquo;/^foo/d ; s/hello/world/&rsquo; input.txt &gt; output.txt</em></td>
 <td align="left">删除开头为foo，替换hello为world</td>
-</tr>
-<tr>
-<td align="left"><code>-l</code></td>
-<td align="left">Make output line buffered.</td>
-</tr>
-<tr>
-<td align="left"><code>-n</code></td>
-<td align="left">不把处理过程输出到屏幕上</td>
-</tr>
-<tr>
-<td align="left"><code>p</code> with <code>-n</code> 输出特定行：</td>
-<td align="left"><em>sed -n ’3p’ file.txt</em></td>
-</tr>
-<tr>
-<td align="left">exit 0</td>
-<td align="left">succ</td>
-</tr>
-<tr>
-<td align="left">exit 1</td>
-<td align="left">invalid command</td>
-</tr>
-<tr>
-<td align="left">exit 2</td>
-<td align="left">多个文件处理其中一个文件打不开</td>
-</tr>
-<tr>
-<td align="left">exit 4</td>
-<td align="left">IO error</td>
 </tr>
 </tbody>
 </table>
